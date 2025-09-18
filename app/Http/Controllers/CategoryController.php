@@ -11,9 +11,9 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::with('faqs')->get();
+        $categories = Category::with('faqs')->paginate(10);
         return Inertia::render('Welcome')->with('categories', $categories);
     }
 
