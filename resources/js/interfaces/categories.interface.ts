@@ -13,3 +13,13 @@ export interface Category {
 }
 
 export type Categories = Category[];
+
+export interface CategorySimple {
+    id: number;
+    name: string;
+    slug: string;
+}
+
+export interface CategoriesSimpleResource {
+    data: CategorySimple[];
+}

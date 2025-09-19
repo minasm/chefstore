@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CategorySimpleResource;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -36,9 +37,12 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
+    public function show(Category $category, Request $request)
     {
-        //
+        return Inertia::render('Category')->with([
+            'categories' => CategorySimpleResource::collection(Category::get()),
+            'category' => $category->with('faqs')->first(),
+        ]);
     }
 
     /**

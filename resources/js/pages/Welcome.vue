@@ -76,10 +76,9 @@
     <div v-else>
       <!-- Desktop için kategori grid -->
       <div class="hidden xl:block">
-        <CategoryGrid :categories="categories" />
+         <CategoryGrid :categories="categories" />
 
-        <!-- Use the paginator with the pagination prop and listen to update:page -->
-        <Paginator :pagination="pagination" @update:page="changePage" />
+        <Paginator :links="paginationLinks" @navigate="changePage" />
       </div>
 
       <!-- Mobil için kategori menüsü -->
@@ -90,8 +89,9 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
+import { router } from "@inertiajs/vue3";
 import { useFaqStore } from "@/stores/categories.js";
 
 
@@ -102,41 +102,56 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import SearchBar from "@/components/SearchBar.vue";
 
 import serviceImg from "../../assets/Settings.svg";
-import salesImg from "../..//assets/sales.svg";
-import phoneImg from "../..//assets/phone.svg";
+import salesImg from "../../assets/sales.svg";
+import phoneImg from "../../assets/phone.svg";
 import Paginator from "@/components/Paginator.vue";
+import { Category, Categories } from "@/interfaces/categories.interface";
+import { PaginatedCategories } from "@/interfaces/paginatedCategories.interface";
+import { Faq } from "@/interfaces/faq.interface";
+import { PaginationLink } from "@/interfaces/paginationLink.interface";
 
-const props = defineProps({
-  categories: {
-    type: Array,
-    required: true,
-    validator: (value) =>
-      Array.isArray(value) &&
-      value.every(
-        (category) =>
-          category &&
-          typeof category.id === "number" &&
-          typeof category.name === "string" &&
-          typeof category.slug === "string" &&
-          typeof category.faqs_count === "number"
-      ),
-  },
-});
+type CategoriesProp = Categories | PaginatedCategories;
+
+const props = defineProps<{
+  categories?: CategoriesProp;
+}>();
+
+const isPaginatedCategories = (
+  value: CategoriesProp | undefined
+): value is PaginatedCategories =>
+  !!value && !Array.isArray(value) && Array.isArray(value.data);
 
 
 // Store
 const categoryStore = useFaqStore();
-// const categories = computed(() => categoryStore.categories);
+const categories = computed<Category[]>(() => {
+  const incoming = props.categories;
+  if (Array.isArray(incoming)) {
+    return incoming;
+  }
+  if (isPaginatedCategories(incoming)) {
+    return incoming.data;
+  }
+  return [];
+});
+
+const paginationLinks = computed<PaginationLink[]>(() => {
+  const incoming = props.categories;
+  if (isPaginatedCategories(incoming)) {
+    return incoming.links || [];
+  }
+  return [];
+});
 
 //Search
-const searchResults = ref([]);
-const handleSelectedResult = async (faq) => {
+const searchResults = ref<Faq[]>([]);
+const handleSelectedResult = async (faq: Faq) => {
   if (categoryStore.categories.length === 0) {
     // await categoryStore.fetchCategories(); // ensure categories are available
   }
 
   const matchedCategory = categoryStore.categories.find(
-      (cat) => cat.id === faq.category_id
+      (cat: Category) => cat.id === faq.category_id
   );
 
   if (matchedCategory) {
@@ -159,29 +174,7 @@ const handleSelectedResult = async (faq) => {
   }
 };
 
-// Sayfa bilgisi ve limiti
-const currentPage = ref(1);
-const pageSize = 8;
-
-const paginatedCategories = computed(() => {
-  const cats = props.categories.value;
-  if (!Array.isArray(cats)) return [];
-  const start = (currentPage.value - 1) * pageSize;
-  return cats.slice(start, start + pageSize);
-});
-
-const totalPages = computed(() => {
-  debugger
-  const cats = props.categories.value;
-  return Array.isArray(cats) ? Math.ceil(cats.length / pageSize) : 1;
-});
-
-// Build the pagination object expected by Paginator
-const pagination = computed(() => ({
-  total: Array.isArray(props.categories.value) ? props.categories.value.length : 0,
-  current_page: currentPage.value,
-  last_page: totalPages.value,
-}));
+const paginatedCategories = computed<Category[]>(() => categories.value);
 
 // Sayfa yüklendiğinde kategorileri al
 onMounted(() => {
@@ -189,10 +182,13 @@ onMounted(() => {
 });
 
 // Sayfa değiştirme işlevi
-const changePage = (page) => {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
+const changePage = (url: string | null) => {
+  if (!url) return;
+  router.visit(url, {
+    preserveState: true,
+    onSuccess: () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+  });
 };
 </script>

@@ -1,4 +1,5 @@
 import { Category } from "./categories.interface";
+import { PaginationLink } from "./paginationLink.interface";
 
 export interface PaginatedCategories {
   data: Category[];

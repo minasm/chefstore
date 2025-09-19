@@ -1,3 +1,44 @@
+<script setup lang="ts">
+import { ref, watch } from "vue";
+import SearchBar from "@/components/SearchBar.vue";
+import Paginator from "@/components/Paginator.vue";
+import chefIcon from "@/../assets/chef.svg";
+import upIcon from "@/../assets/up.svg";
+import downIcon from "@/../assets/down.svg";
+import { Faqs } from '@/interfaces/faq.interface';
+
+
+const props = defineProps({
+    faqs: Faqs,
+    selectedCategory: String,
+    isMobile: Boolean,
+    categories: CategoriesSimpleResource,
+    highlightId: Number,
+    openIndexes: Array,
+    pagination: Object,
+});
+
+const searchResults = ref([]);
+// Local state mirrors prop and stays in sync when the parent updates it
+const openIndexes = ref(Array.isArray(props.openIndexes) ? [...props.openIndexes] : []);
+
+watch(
+    () => props.openIndexes,
+    (newVal) => {
+        openIndexes.value = Array.isArray(newVal) ? [...newVal] : [];
+    },
+    { deep: true, immediate: true }
+);
+
+function toggleAccordion(index) {
+    const i = openIndexes.value.indexOf(index);
+    if (i > -1) {
+        openIndexes.value.splice(i, 1);
+    } else {
+        openIndexes.value.push(index);
+    }
+}
+</script>
 <template>
   <div class="w-full flex justify-start items-start gap-16 mb-10">
     <!-- Sidebar -->
@@ -6,7 +47,7 @@
         <span class="text-[#204050] font-extrabold">Klantenservice</span>
       </div>
       <div
-        v-for="cat in props.all"
+        v-for="cat in props.categories"
         :key="cat.slug"
         :class="[
           'category-item',
@@ -31,11 +72,11 @@
     <div class="w-full xl:w-3/4 flex flex-col gap-6 xl:gap-8">
       <SearchBar @results="searchResults = $event" />
       <h2 class="text-[#4c84df] text-lg xl:text-3xl font-extrabold">
-        {{ categories[selectedCategory]?.title || "Geen titel" }}
+        {{ faqs[selectedCategory]?.title || "Geen titel" }}
       </h2>
 
       <div
-        v-for="(q, index) in categories[selectedCategory]?.questions || []"
+        v-for="(q, index) in faqs[selectedCategory]?.questions || []"
         :key="q.id"
         :id="`faq-${q.id}`"
         class="border-b border-[#2e3638]/20 py-2 xl:py-4"
@@ -73,46 +114,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref, watch } from "vue";
-import SearchBar from "@/components/SearchBar.vue";
-import Paginator from "@/components/Paginator.vue";
-import chefIcon from "@/assets/chef.svg";
-import upIcon from "@/assets/up.svg";
-import downIcon from "@/assets/down.svg";
-
-const props = defineProps({
-  categories: Object,
-  selectedCategory: String,
-  isMobile: Boolean,
-  all: Array,
-  highlightId: Number,
-  openIndexes: Array,
-  pagination: Object,
-});
-
-const searchResults = ref([]);
-// Local state mirrors prop and stays in sync when parent updates it
-const openIndexes = ref(Array.isArray(props.openIndexes) ? [...props.openIndexes] : []);
-
-watch(
-  () => props.openIndexes,
-  (newVal) => {
-    openIndexes.value = Array.isArray(newVal) ? [...newVal] : [];
-  },
-  { deep: true, immediate: true }
-);
-
-function toggleAccordion(index) {
-  const i = openIndexes.value.indexOf(index);
-  if (i > -1) {
-    openIndexes.value.splice(i, 1);
-  } else {
-    openIndexes.value.push(index);
-  }
-}
-</script>
 
 <style scoped>
 .category-item {

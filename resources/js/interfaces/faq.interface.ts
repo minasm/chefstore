@@ -6,3 +6,18 @@ export interface Faq {
   created_at: string;
   updated_at: string;
 }
+
+export type Faqs = Faq[];
+// export interface FaqEntry {
+//     id: number;
+//     q: string;
+//     a: string;
+// }
+//
+// export interface FaqGroup {
+//     title: string;
+//     questions: FaqEntry[];
+// }
+//
+// // keyed by category slug
+// export type FaqsBySlug = Record<string, FaqGroup>;

@@ -2,11 +2,11 @@
   <div
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7"
   >
-    <div
+    <Link
         v-for="category in categories"
         :key="category.slug"
-        @click="goToCategory(category)"
-        class="cursor-pointer bg-white rounded shadow overflow-hidden hover:shadow-lg transition"
+        :href="`/categories/${category.id}/`"
+        class="cursor-pointer bg-white rounded shadow overflow-hidden hover:shadow-lg transition block"
     >
       <div class="relative">
         <img
@@ -23,16 +23,23 @@
           <span class="text-white font-bold text-xl">→</span>
         </div>
       </div>
-    </div>
+    </Link>
   </div>
 </template>
 
-<script setup>
-// import { useRouter } from "vue-router";
+<script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
 
-defineProps({
-  categories: Array,
-});
+interface Category {
+  id: number | string;
+  slug: string;
+  name: string;
+  image?: string | null;
+}
+// :href="`/categories/${category.id}/${category.slug}`"
+defineProps<{
+  categories: Category[];
+}>();
 
 // const router = useRouter();
 
@@ -40,19 +47,9 @@ defineProps({
 const API_BASE = import.meta.env.VITE_API_URL;
 
 // Safe join to avoid double slashes
-const imageSrc = (image) => {
-  const base = (API_BASE || "").replace(/\/+$/, "");
-  const path = String(image || "").replace(/^\/+/, "");
-  return `${base}/${path}`;
-};
-
-const goToCategory = (category) => {
-  router.push({
-    name: "CategoryDetail",
-    params: {
-      id: category.id,
-      slug: category.slug,
-    },
-  });
+const imageSrc = (image?: string | null): string => {
+  const base = (API_BASE || '').replace(/\/+$/, '');
+  const path = String(image || '').replace(/^\/+/, '');
+  return path ? `${base}/${path}` : `${base}/placeholder.jpg`;
 };
 </script>
