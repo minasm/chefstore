@@ -9,10 +9,16 @@ class Faq extends Model
 {
      use HasFactory;
 
+    protected $fillable = [
+        'category_id',
+        'question',
+        'answer',
+    ];
+
 /**
  * Get the category that owns the FAQ.
  */
-public function category()
+public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
 {
     return $this->belongsTo(Category::class);
 }

@@ -9,6 +9,13 @@ class Category extends Model
 {
      use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'slug',
+        'description',
+        'image',
+    ];
+
     public function getRouteKeyName(): string
     {
         return 'slug'; // then pass slug below
@@ -17,7 +24,7 @@ class Category extends Model
 /**
  * Get the FAQs for the category.
  */
-public function faqs()
+public function faqs(): \Illuminate\Database\Eloquent\Relations\HasMany|Category
 {
     return $this->hasMany(Faq::class);
 }
