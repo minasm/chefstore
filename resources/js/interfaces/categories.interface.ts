@@ -1,4 +1,4 @@
-import { Faq } from "./faq.interface";
+import { Faq, FAQResource } from './faq.interface';
 
 export interface Category {
   id: number;
@@ -9,7 +9,7 @@ export interface Category {
   image?: string | null;
   created_at?: string;
   updated_at?: string;
-  faqs?: Faq[];
+  faqs: FAQResource[];
 }
 
 export type Categories = Category[];

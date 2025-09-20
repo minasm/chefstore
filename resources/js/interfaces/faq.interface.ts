@@ -1,3 +1,6 @@
+import { CategorySimple } from '@/interfaces/categories.interface';
+import { Links } from '@/interfaces/pagination.interface';
+
 export interface Faq {
   id: number;
   question: string;
@@ -8,6 +11,13 @@ export interface Faq {
 }
 
 export type Faqs = Faq[];
+
+export interface FAQResource {
+    data: Faq[];
+    links: Links;
+    total: number;
+}
+
 // export interface FaqEntry {
 //     id: number;
 //     q: string;
