@@ -39,9 +39,14 @@ class CategoryController extends Controller
      */
     public function show(Category $category, Request $request)
     {
+        $faqs = $category->faqs()->paginate(10);
+
+        $category->setRelation('faqs', $faqs);
+
+
         return Inertia::render('Category')->with([
             'categories' => CategorySimpleResource::collection(Category::get()),
-            'category' => $category->with('faqs')->first(),
+            'category' => $category,
         ]);
     }
 

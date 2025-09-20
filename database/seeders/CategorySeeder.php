@@ -14,8 +14,8 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        $categoryCount = 30;
-        $faqsPerCategory = 5;
+        $categoryCount = 20;
+        $faqsPerCategory = 25;
 
         // Clear existing data
         // Faq::truncate();

@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', [CategoryController::class, 'index'])->name('home');
-Route::get('categories/{category}', [CategoryController::class, 'show'])->name('home');
+Route::get('categories/{category}', [CategoryController::class, 'show'])->name('category.show');
 
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');

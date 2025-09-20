@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, computed, ref, watch, nextTick } from 'vue';
-import { useFaqStore } from '@/stores/categories.js';
+import { onMounted, onBeforeUnmount, ref, watch, nextTick } from 'vue';
+import { router } from '@inertiajs/vue3';
+
 
 import ContactCard from '@/components/ContactCard.vue';
 import CategoryMobile from '@/components/CategoryMobile.vue';
@@ -10,7 +11,7 @@ import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import serviceImg from '@/../assets/Settings.svg';
 import salesImg from '@/../assets/sales.svg';
 import phoneImg from '@/../assets/phone.svg';
-import { Categories, CategoriesSimpleResource, Category } from '@/interfaces/categories.interface';
+import { CategoriesSimpleResource, Category } from '@/interfaces/categories.interface';
 
 const props = defineProps<{
     categories: CategoriesSimpleResource;
@@ -20,9 +21,9 @@ const props = defineProps<{
 // const id = Number(route.params.id);
 // const highlightId = computed(() => Number(route.query.highlight));
 
-const faqStore = useFaqStore();
+// const faqStore = useFaqStore();
 const faqCategories = ref({});
-const selectedCategory = ref(null);
+const selectedCategory = ref('dw');
 // const allCategories = computed(() => faqStore.categories);
 const openIndexes = ref([]);
 const currentCategoryId = ref(props.category.id);
@@ -95,31 +96,31 @@ const scrollToRelevantFaq = async () => {
 
 const loadCategory = async (category) => {
     // Defensive: ignore bad emits
-    if (!category || !category.id) {
-        console.warn('loadCategory called without a valid category:', category);
-        return;
-    }
-
-    const targetId = Number(category.id);
-    const targetSlug = category.slug;
-    const currentPage = 1; //Number(route.query.page) > 0 ? Number(route.query.page) : 1;
-
-    // If we're already on the same category+page (e.g., caused by re-renders), skip.
-    if (props.category.id === targetId) {
-        // Ensure selectedCategory syncs with slug but do not refetch.
-        selectedCategory.value = targetSlug || selectedCategory.value;
-        return;
-    }
-
-    // Only update the route; the route watcher will perform the fetch, state updates and scrolling
-    // await router.replace({
-    //     name: "CategoryDetail",
-    //     params: { id: targetId, slug: targetSlug },
-    //     query: { page: currentPage },
-    // });
-
-    // Optimistically update selected slug to keep sidebar highlight responsive; data will sync in watcher
-    selectedCategory.value = category.slug;
+    // if (!category || !category.id) {
+    //     console.warn('loadCategory called without a valid category:', category);
+    //     return;
+    // }
+    //
+    // const targetId = Number(category.id);
+    // const targetSlug = category.slug;
+    // const currentPage = 1; //Number(route.query.page) > 0 ? Number(route.query.page) : 1;
+    //
+    // // If we're already on the same category+page (e.g., caused by re-renders), skip.
+    // if (props.category.id === targetId) {
+    //     // Ensure selectedCategory syncs with slug but do not refetch.
+    //     selectedCategory.value = targetSlug || selectedCategory.value;
+    //     return;
+    // }
+    //
+    // // Only update the route; the route watcher will perform the fetch, state updates and scrolling
+    // // await router.replace({
+    // //     name: "CategoryDetail",
+    // //     params: { id: targetId, slug: targetSlug },
+    // //     query: { page: currentPage },
+    // // });
+    //
+    // // Optimistically update selected slug to keep sidebar highlight responsive; data will sync in watcher
+    // selectedCategory.value = category.slug;
 };
 
 onMounted(async () => {
@@ -192,6 +193,19 @@ async function changePage(page) {
     //     query: { ...route.query, page }
     // });
 }
+// Handle page change from CategoryFaq
+function handlePageNavigation(url: string | null) {
+    if (!url) return;
+
+    router.visit(url, {
+        preserveState: true,
+        preserveScroll: false,
+        onSuccess: () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+    });
+}
+
 </script>
 
 <template>
@@ -221,13 +235,14 @@ async function changePage(page) {
             <LoadingSpinner v-if="category.faqs?.length === 0" />
             <CategoryFaq
                 v-else
-                :categories="category.faqs"
-                :selectedCategory="selectedCategory"
+                :faqs="category.faqs"
+                :selectedCategory="category"
                 isMobile
                 :highlight-id="highlightId"
                 :open-indexes="openIndexes"
                 :pagination="faqCategories[selectedCategory]?.pagination"
                 @page-change="changePage"
+                @navigate="handlePageNavigation"
             />
         </div>
 
@@ -240,15 +255,16 @@ async function changePage(page) {
             <LoadingSpinner v-if="category.faqs?.length === 0" />
             <CategoryFaq
                 v-else
-                :categories="category.faqs"
-                :selectedCategory="selectedCategory"
-                :all="categories.data"
+                :faqs="category.faqs"
+                :selectedCategory="category"
+                :categories="categories.data"
                 :highlight-id="highlightId"
                 :open-indexes="openIndexes"
                 :pagination="faqCategories[selectedCategory]?.pagination"
                 isMobile
                 @change="loadCategory"
                 @page-change="changePage"
+                @navigate="handlePageNavigation"
             />
         </div>
     </div>

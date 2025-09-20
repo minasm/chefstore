@@ -23,3 +23,14 @@ export interface CategorySimple {
 export interface CategoriesSimpleResource {
     data: CategorySimple[];
 }
+
+export interface SelectedCategory {
+    id: number;
+    name: string;
+    slug: string;
+    description: string;
+    image: string | null;
+    created_at: string;
+    updated_at: string;
+    faqs?: Faq[];
+}

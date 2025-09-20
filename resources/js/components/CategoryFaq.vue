@@ -2,21 +2,23 @@
 import { ref, watch } from "vue";
 import SearchBar from "@/components/SearchBar.vue";
 import Paginator from "@/components/Paginator.vue";
-import chefIcon from "@/../assets/chef.svg";
 import upIcon from "@/../assets/up.svg";
 import downIcon from "@/../assets/down.svg";
-import { Faqs } from '@/interfaces/faq.interface';
+import type { Faqs } from '@/interfaces/faq.interface';
+import type { CategoriesSimpleResource } from '@/interfaces/categories.interface';
+import CategorySidebarList from '@/components/CategorySidebarList.vue';
 
 
 const props = defineProps({
-    faqs: Faqs,
-    selectedCategory: String,
+    faqs: Object as () => Faqs,
+    selectedCategory: Object,
     isMobile: Boolean,
-    categories: CategoriesSimpleResource,
+    categories: Array as () => CategoriesSimpleResource,
     highlightId: Number,
     openIndexes: Array,
     pagination: Object,
 });
+const emit = defineEmits(['change', 'navigate']);
 
 const searchResults = ref([]);
 // Local state mirrors prop and stays in sync when the parent updates it
@@ -41,47 +43,27 @@ function toggleAccordion(index) {
 </script>
 <template>
   <div class="w-full flex justify-start items-start gap-16 mb-10">
-    <!-- Sidebar -->
-    <div class="w-1/4 hidden xl:flex flex-col" id="sidebar">
-      <div class="h-12 border-b border-[#2e3638]/20 flex items-center pl-4">
-        <span class="text-[#204050] font-extrabold">Klantenservice</span>
-      </div>
-      <div
-        v-for="cat in props.categories"
-        :key="cat.slug"
-        :class="[
-          'category-item',
-          selectedCategory === cat.slug
-            ? 'active bg-gradient-to-r from-[#e8761c] to-[#ffb072] text-white'
-            : 'text-[#204050] cursor-pointer',
-        ]"
-        class="h-12 pr-3 pl-4 flex items-center"
-        @click="$emit('change', cat)"
-      >
-        <img
-          v-if="selectedCategory === cat.slug"
-          :src="chefIcon"
-          alt="Chef Icon"
-          class="w-5 h-5 mr-1"
-        />
-        <span>{{ cat.name }}</span>
-      </div>
-    </div>
+
+      <CategorySidebarList
+          :categories="categories"
+          :selected-category="selectedCategory"
+            @change="$emit(  'change', $event)" />
 
     <!-- Content -->
     <div class="w-full xl:w-3/4 flex flex-col gap-6 xl:gap-8">
       <SearchBar @results="searchResults = $event" />
       <h2 class="text-[#4c84df] text-lg xl:text-3xl font-extrabold">
-        {{ faqs[selectedCategory]?.title || "Geen titel" }}
+        {{ selectedCategory.name || "Geen titel" }}
+
       </h2>
 
       <div
-        v-for="(q, index) in faqs[selectedCategory]?.questions || []"
-        :key="q.id"
-        :id="`faq-${q.id}`"
+        v-for="(faq, index) in faqs.data || []"
+        :key="faq.id"
+        :id="`faq-${faq.id}`"
         class="border-b border-[#2e3638]/20 py-2 xl:py-4"
         :class="{
-          highlight: highlightId === q.id,
+          highlight: highlightId === faq.id,
         }"
       >
         <div
@@ -94,7 +76,7 @@ function toggleAccordion(index) {
               openIndexes.includes(index) ? 'text-[#e8761c]' : 'text-[#204050]',
             ]"
           >
-            {{ q.q }}
+            {{ faq.question }}
           </div>
           <img
             :src="openIndexes.includes(index) ? upIcon : downIcon"
@@ -103,14 +85,15 @@ function toggleAccordion(index) {
           />
         </div>
         <div v-if="openIndexes.includes(index)" class="mt-2 text-[#204050]">
-          <div v-html="q.a"></div>
+          <div v-html="faq.answer"></div>
         </div>
       </div>
-      <Paginator
-        v-if="props.pagination"
-        :pagination="props.pagination"
-        @page-change="$emit('page-change', $event)"
-      />
+        <Paginator
+            v-if="faqs?.links"
+            :links="faqs.links"
+            @navigate="$emit('navigate', $event)"
+        />
+
     </div>
   </div>
 </template>
