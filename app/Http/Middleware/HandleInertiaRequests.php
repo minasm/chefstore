@@ -41,25 +41,50 @@ class HandleInertiaRequests extends Middleware
 
         return [
             ...parent::share($request),
-            'auth' => [
-                'user' => $request->user(),
-            ],
-            'searchResults' => Inertia::lazy(function () use ($request) {
+
+            'searchResults' => Inertia::optional(function () use ($request) {
                 $term = trim((string) $request->input('term', ''));
                 if ($term === '') return [];
-                return Faq::query()
+
+                $perPage = (int) config('faq.per_page', 10);
+                $order = strtolower((string) config('faq.order', 'asc'));
+
+                // Fetch minimal fields + category slug, searching both question & answer, distinct FAQs
+                $hits = Faq::query()
                     ->with('category:id,slug')
-                    ->where('question', 'like', "%{$term}%")
+                    ->select(['id', 'category_id', 'question', 'answer'])
+                    ->where(function ($q) use ($term) {
+                        $q->where('question', 'like', "%{$term}%")
+                          ->orWhere('answer', 'like', "%{$term}%");
+                    })
+                    ->distinct()
                     ->limit(10)
-                    ->get()
-                    ->map(fn ($faq) => [
-                        'id' => $faq->id,
-                        'category_id' => $faq->category_id,
-                        'category_slug' => optional($faq->category)->slug, // <- add this
-                        'question' => $faq->question,
-                        'answer' => $faq->answer,
-                        'page' => $faq->page ?? null, // include if you have it
-                    ]);
+                    ->get();
+
+                // Compute page per hit using configured order
+                return $hits->map(function (Faq $faq) use ($perPage, $order) {
+                    if ($order === 'desc') {
+                        $beforeCount = Faq::query()
+                            ->where('category_id', $faq->category_id)
+                            ->where('id', '>', $faq->id)
+                            ->count();
+                    } else {
+                        $beforeCount = Faq::query()
+                            ->where('category_id', $faq->category_id)
+                            ->where('id', '<', $faq->id)
+                            ->count();
+                    }
+                    $position = $beforeCount + 1;
+                    $page = (int) (floor(($position - 1) / max(1, (int) $perPage)) + 1);
+                    return [
+                        'id'            => $faq->id,
+                        'category_id'   => $faq->category_id,
+                        'category_slug' => optional($faq->category)->slug,
+                        'question'      => $faq->question,
+                        'answer'        => $faq->answer,
+                        'page'          => $page,
+                    ];
+                });
             }),
         ];
     }
