@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import {  ref } from 'vue';
 import { router } from '@inertiajs/vue3';
-
 
 import ContactCard from '@/components/ContactCard.vue';
 import CategoryMobile from '@/components/CategoryMobile.vue';
@@ -13,14 +11,17 @@ import salesImg from '@/../assets/sales.svg';
 import phoneImg from '@/../assets/phone.svg';
 import { CategoriesSimpleResource, Category } from '@/interfaces/categories.interface';
 
-const props = defineProps<{
-    categories: CategoriesSimpleResource;
-    category: Category;
-    highlightId: {type: number, default: number}
-}>();
+const props = withDefaults(
+    defineProps<{
+        categories: CategoriesSimpleResource;
+        category: Category;
+        highlightId?: number | null;
+    }>(),
+    {
+        highlightId: null,
+    },
+);
 
-
-const openIndexes = ref([]);
 
 function handlePageNavigation(url: string | null) {
     if (!url) return;
@@ -60,13 +61,12 @@ function handlePageNavigation(url: string | null) {
 
         <!-- Mobile -->
         <div class="mt-6 flex w-full flex-col px-5 xl:hidden">
-            <LoadingSpinner v-if="category.faqs?.length === 0" />
+            <LoadingSpinner v-if="category.faqs?.data?.length === 0" />
             <CategoryFaq
                 v-else
                 :faqs="category.faqs"
                 :selectedCategory="category"
                 :highlight-id="props.highlightId"
-                :open-indexes="openIndexes"
                 @navigate="handlePageNavigation"
             />
         </div>
@@ -77,14 +77,13 @@ function handlePageNavigation(url: string | null) {
 
         <!-- Web Category -->
         <div class="hidden xl:block">
-            <LoadingSpinner v-if="category.faqs?.length === 0" />
+            <LoadingSpinner v-if="category.faqs?.data?.length === 0" />
             <CategoryFaq
                 v-else
                 :faqs="category.faqs"
                 :selectedCategory="category"
                 :categories="categories.data"
                 :highlight-id="props.highlightId"
-                :open-indexes="openIndexes"
                 @navigate="handlePageNavigation"
             />
         </div>

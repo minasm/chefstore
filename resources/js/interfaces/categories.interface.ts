@@ -9,7 +9,7 @@ export interface Category {
   image?: string | null;
   created_at?: string;
   updated_at?: string;
-  faqs: FAQResource[];
+  faqs: FAQResource;
 }
 
 export type Categories = Category[];

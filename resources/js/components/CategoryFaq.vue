@@ -5,19 +5,34 @@ import Paginator from '@/components/Paginator.vue';
 import upIcon from '@/../assets/up.svg';
 import downIcon from '@/../assets/down.svg';
 import type { FAQResource } from '@/interfaces/faq.interface';
-import type { CategoriesSimpleResource, Category } from '@/interfaces/categories.interface';
+import type { Category, CategorySimple } from '@/interfaces/categories.interface';
 import CategorySidebarList from '@/components/CategorySidebarList.vue';
 
-const props = defineProps<{
-    faqs: { type: FAQResource; required: true };
-    selectedCategory: { type: Category, required: true };
-    categories: CategoriesSimpleResource;
-    highlightId: { type: number; default: null };
-}>();
+type SearchResult = {
+    id: number;
+    question: string;
+    answer: string;
+    category_id: number | string;
+    category_slug?: string | null;
+    page?: number | string;
+};
+
+const props = withDefaults(
+    defineProps<{
+        faqs: FAQResource;
+        selectedCategory: Category;
+        categories?: CategorySimple[];
+        highlightId?: number | null;
+    }>(),
+    {
+        categories: () => [] as CategorySimple[],
+        highlightId: null,
+    },
+);
 
 defineEmits(['change', 'navigate']);
 
-const searchResults = ref([]);
+const searchResults = ref<SearchResult[]>([]);
 // Local state for open accordion indexes managed within this component
 const openIndexes = ref<number[]>([]);
 

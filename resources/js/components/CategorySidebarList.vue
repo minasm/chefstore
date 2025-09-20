@@ -2,11 +2,11 @@
 import { Link } from '@inertiajs/vue3'
 import { show } from "@/actions/App/Http/Controllers/CategoryController";
 import chefIcon from "@/../assets/chef.svg";
-import type { CategoriesSimpleResource, SelectedCategory } from '@/interfaces/categories.interface';
+import type { Category, CategorySimple } from '@/interfaces/categories.interface';
 
 const props = defineProps<{
-    categories: CategoriesSimpleResource;
-    selectedCategory: SelectedCategory;
+    categories: CategorySimple[];
+    selectedCategory: Category;
 }>();
 </script>
 
