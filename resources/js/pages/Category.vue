@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { router } from '@inertiajs/vue3';
+import { useMediaQuery } from '@vueuse/core';
 
 import ContactCard from '@/components/ContactCard.vue';
 import CategoryMobile from '@/components/CategoryMobile.vue';
@@ -22,6 +24,11 @@ const props = withDefaults(
     },
 );
 
+const isDesktop = useMediaQuery('(min-width: 1280px)');
+const isFaqLoading = computed(() => {
+    const data = props.category.faqs?.data;
+    return !Array.isArray(data) || data.length === 0;
+});
 
 function handlePageNavigation(url: string | null) {
     if (!url) return;
@@ -39,8 +46,7 @@ function handlePageNavigation(url: string | null) {
 
 <template>
     <div class="xl:px-32 xl:py-5">
-        <!-- Web -->
-        <div class="hidden flex-col xl:flex">
+        <div v-if="isDesktop" class="flex flex-col">
             <h1 class="mb-32 text-3xl font-extrabold text-[#4c84df]">Klantenservice</h1>
             <div class="mb-10 flex h-46 bg-[#2e567d] px-16">
                 <div class="h-60 w-60 items-center justify-start">
@@ -57,35 +63,35 @@ function handlePageNavigation(url: string | null) {
                     </div>
                 </div>
             </div>
+
+            <div>
+                <LoadingSpinner v-if="isFaqLoading" />
+                <CategoryFaq
+                    v-else
+                    :faqs="category.faqs"
+                    :selectedCategory="category"
+                    :categories="categories.data"
+                    :highlight-id="props.highlightId"
+                    @navigate="handlePageNavigation"
+                />
+            </div>
         </div>
 
-        <!-- Mobile -->
-        <div class="mt-6 flex w-full flex-col px-5 xl:hidden">
-            <LoadingSpinner v-if="category.faqs?.data?.length === 0" />
-            <CategoryFaq
-                v-else
-                :faqs="category.faqs"
-                :selectedCategory="category"
-                :highlight-id="props.highlightId"
-                @navigate="handlePageNavigation"
-            />
-        </div>
+        <div v-else class="flex w-full flex-col gap-6">
+            <div class="mt-6 flex w-full flex-col px-5">
+                <LoadingSpinner v-if="isFaqLoading" />
+                <CategoryFaq
+                    v-else
+                    :faqs="category.faqs"
+                    :selectedCategory="category"
+                    :highlight-id="props.highlightId"
+                    @navigate="handlePageNavigation"
+                />
+            </div>
 
-        <div class="flex w-full flex-col xl:hidden">
-            <CategoryMobile :categories="categories.data" v-model:selectedCategory="category.name" />
-        </div>
-
-        <!-- Web Category -->
-        <div class="hidden xl:block">
-            <LoadingSpinner v-if="category.faqs?.data?.length === 0" />
-            <CategoryFaq
-                v-else
-                :faqs="category.faqs"
-                :selectedCategory="category"
-                :categories="categories.data"
-                :highlight-id="props.highlightId"
-                @navigate="handlePageNavigation"
-            />
+            <div class="flex w-full flex-col">
+                <CategoryMobile :categories="categories.data" v-model:selectedCategory="category.name" />
+            </div>
         </div>
     </div>
 </template>
