@@ -9,6 +9,11 @@ class Category extends Model
 {
      use HasFactory;
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug'; // then pass slug below
+    }
+
 /**
  * Get the FAQs for the category.
  */

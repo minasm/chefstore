@@ -15,21 +15,35 @@ const props = defineProps({
     isMobile: Boolean,
     categories: Array as () => CategoriesSimpleResource,
     highlightId: Number,
-    openIndexes: Array,
     pagination: Object,
 });
-const emit = defineEmits(['change', 'navigate']);
+defineEmits(['change', 'navigate']);
 
 const searchResults = ref([]);
-// Local state mirrors prop and stays in sync when the parent updates it
-const openIndexes = ref(Array.isArray(props.openIndexes) ? [...props.openIndexes] : []);
+// Local state for open accordion indexes managed within this component
+const openIndexes = ref<number[]>([]);
 
+// Initialize opened item on first load: open highlighted item if present; otherwise open first item if exists
+const initialized = ref(false);
 watch(
-    () => props.openIndexes,
-    (newVal) => {
-        openIndexes.value = Array.isArray(newVal) ? [...newVal] : [];
+    () => [props.highlightId, props.faqs?.data],
+    () => {
+        if (initialized.value) return;
+        const list = props.faqs?.data || [];
+        if (!Array.isArray(list) || list.length === 0) return;
+
+        const idx = list.findIndex((f: any) => f?.id === props.highlightId);
+        if (idx !== -1) {
+            openIndexes.value = [idx];
+            initialized.value = true;
+            return;
+        }
+
+        // No highlight match; open the first item by default
+        openIndexes.value = [0];
+        initialized.value = true;
     },
-    { deep: true, immediate: true }
+    { immediate: true }
 );
 
 function toggleAccordion(index) {
@@ -84,9 +98,11 @@ function toggleAccordion(index) {
             class="w-5 h-5"
           />
         </div>
-        <div v-if="openIndexes.includes(index)" class="mt-2 text-[#204050]">
-          <div v-html="faq.answer"></div>
-        </div>
+        <Transition name="faq-accordion">
+          <div v-show="openIndexes.includes(index)" class="mt-2 text-[#204050] overflow-hidden">
+            <div v-html="faq.answer"></div>
+          </div>
+        </Transition>
       </div>
         <Paginator
             v-if="faqs?.links"
@@ -114,5 +130,21 @@ function toggleAccordion(index) {
 .highlight {
   background: linear-gradient(to right, #ffb072, #e8761c);
   color: white;
+}
+.faq-accordion-enter-from,
+.faq-accordion-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+
+.faq-accordion-enter-to,
+.faq-accordion-leave-from {
+  max-height: 500px; /* large enough for typical answers */
+  opacity: 1;
+}
+
+.faq-accordion-enter-active,
+.faq-accordion-leave-active {
+  transition: max-height 200ms ease, opacity 200ms ease;
 }
 </style>

@@ -7,6 +7,8 @@ use Inertia\Inertia;
 Route::get('/', [CategoryController::class, 'index'])->name('home');
 Route::get('categories/{category}', [CategoryController::class, 'show'])->name('category.show');
 
+Route::get('/search', [SearchController::class, 'index'])->name('search.index');
+
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

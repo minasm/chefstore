@@ -18,7 +18,7 @@ const props = defineProps<{
         <Link
             v-for="category in props.categories"
             :key="category.slug"
-            :href="show(category.id)"
+            :href="show(category.slug)"
             :class="[
           'category-item',
           selectedCategory.slug === category.slug

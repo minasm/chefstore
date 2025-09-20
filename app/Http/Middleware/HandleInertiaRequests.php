@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Faq;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -45,7 +46,23 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
-            'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'searchResults' => \Inertia\Inertia::lazy(function () use ($request) {
+                $term = trim((string) $request->input('term', ''));
+                if ($term === '') return [];
+                return Faq::query()
+                    ->with('category:id,slug')
+                    ->where('question', 'like', "%{$term}%")
+                    ->limit(10)
+                    ->get()
+                    ->map(fn ($faq) => [
+                        'id' => $faq->id,
+                        'category_id' => $faq->category_id,
+                        'category_slug' => optional($faq->category)->slug, // <- add this
+                        'question' => $faq->question,
+                        'answer' => $faq->answer,
+                        'page' => $faq->page ?? null, // include if you have it
+                    ]);
+            }),
         ];
     }
 }

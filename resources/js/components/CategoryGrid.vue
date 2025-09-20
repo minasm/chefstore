@@ -5,7 +5,7 @@
     <Link
         v-for="category in categories"
         :key="category.slug"
-        :href="`/categories/${category.id}/`"
+        :href="show(category.slug)"
         class="cursor-pointer bg-white rounded shadow overflow-hidden hover:shadow-lg transition block"
     >
       <div class="relative">
@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-
+import { show } from "@/actions/App/Http/Controllers/CategoryController";
 interface Category {
   id: number | string;
   slug: string;
