@@ -65,8 +65,7 @@
 
       <!-- ARAMA KATEGORİ KISMI -->
       <SearchBar
-          @results="searchResults = $event"
-          @select="handleSelectedResult"
+
       />
     </div>
     <!-- KATEGORİLER YÜKLENİYORSA SPINNER GÖSTER -->
@@ -90,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { computed } from "vue";
 import { router } from "@inertiajs/vue3";
 import { useFaqStore } from "@/stores/categories.js";
 
@@ -102,12 +101,11 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import SearchBar from "@/components/SearchBar.vue";
 
 import serviceImg from "../../assets/Settings.svg";
-import salesImg from "../../assets/sales.svg";
+import salesImg from "@/../assets/sales.svg";
 import phoneImg from "../../assets/phone.svg";
 import Paginator from "@/components/Paginator.vue";
 import { Category, Categories } from "@/interfaces/categories.interface";
 import { PaginatedCategories } from "@/interfaces/paginatedCategories.interface";
-import { Faq } from "@/interfaces/faq.interface";
 import { PaginationLink } from "@/interfaces/paginationLink.interface";
 
 type CategoriesProp = Categories | PaginatedCategories;
@@ -143,45 +141,9 @@ const paginationLinks = computed<PaginationLink[]>(() => {
   return [];
 });
 
-//Search
-const searchResults = ref<Faq[]>([]);
-const handleSelectedResult = async (faq: Faq) => {
-  if (categoryStore.categories.length === 0) {
-    // await categoryStore.fetchCategories(); // ensure categories are available
-  }
-
-  const matchedCategory = categoryStore.categories.find(
-      (cat: Category) => cat.id === faq.category_id
-  );
-
-  if (matchedCategory) {
-    const slug = matchedCategory.slug;
-    const id = matchedCategory.id;
-
-    // router.push({
-    //   name: "CategoryDetail",
-    //   params: { id, slug },
-    //   query: { highlight: faq.id, page: faq.page ?? 1 }, // include page so correct paginated data loads
-    // });
-    // alert(2)
-    // await router.replace({
-    //   name: "CategoryDetail",
-    //   params: { id: id, slug: slug },
-    //   query: { page: 1 },
-    // });
-  } else {
-    console.warn("Kategori bulunamadı:", faq.category_id);
-  }
-};
-
 const paginatedCategories = computed<Category[]>(() => categories.value);
 
-// Sayfa yüklendiğinde kategorileri al
-onMounted(() => {
-  // categoryStore.fetchCategories();
-});
 
-// Sayfa değiştirme işlevi
 const changePage = (url: string | null) => {
   if (!url) return;
   router.visit(url, {

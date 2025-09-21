@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import SearchBar from '@/components/SearchBar.vue';
 import Paginator from '@/components/Paginator.vue';
 import upIcon from '@/../assets/up.svg';
@@ -35,6 +35,18 @@ defineEmits(['change', 'navigate']);
 const searchResults = ref<SearchResult[]>([]);
 // Local state for open accordion indexes managed within this component
 const openIndexes = ref<number[]>([]);
+const highlightedItems = ref<number[]>([]);
+
+function scrollToFaq(faqId: number) {
+    if (typeof window === 'undefined' || faqId == null) return;
+
+    nextTick(() => {
+        const element = document.getElementById(`faq-${faqId}`);
+        if (!element) return;
+
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+}
 
 // Initialize opened item on first load: open highlighted item if present; otherwise open first item if exists
 const initialized = ref(false);
@@ -48,6 +60,16 @@ watch(
         const idx = list.findIndex((f: any) => f?.id === props.highlightId);
         if (idx !== -1) {
             openIndexes.value = [idx];
+            if (props.highlightId) {
+                highlightedItems.value = [props.highlightId];
+                // Set timeout to remove the highlight after 2 seconds
+                setTimeout(() => {
+                    highlightedItems.value = [];
+                }, 2000);
+
+                scrollToFaq(props.highlightId);
+            }
+
             initialized.value = true;
             return;
         }
@@ -58,6 +80,28 @@ watch(
     },
     { immediate: true },
 );
+watch(() => props.highlightId, (newId) => {
+    if (newId) {
+        highlightedItems.value = [newId];
+
+        // Set timeout to remove the highlight after 2 seconds
+        setTimeout(() => {
+            highlightedItems.value = [];
+        }, 2000);
+
+        // Also find and open the highlighted item
+        const list = props.faqs?.data || [];
+        if (Array.isArray(list) && list.length > 0) {
+            const idx = list.findIndex((f: any) => f?.id === newId);
+            if (idx !== -1) {
+                openIndexes.value = [idx];
+            }
+        }
+
+        scrollToFaq(newId);
+    }
+});
+
 
 function toggleAccordion(index: number) {
     const i = openIndexes.value.indexOf(index);
@@ -85,7 +129,7 @@ function toggleAccordion(index: number) {
                 :id="`faq-${faq.id}`"
                 class="border-b border-[#2e3638]/20 py-2 xl:py-4"
                 :class="{
-                    highlight: highlightId === faq.id,
+                    'highlight fade-highlight': highlightedItems.includes(faq.id),
                 }"
             >
                 <div class="flex cursor-pointer items-center justify-between" @click="toggleAccordion(index)">
@@ -140,4 +184,23 @@ function toggleAccordion(index: number) {
         max-height 200ms ease,
         opacity 200ms ease;
 }
+/* Add a fade-out animation for the highlight */
+.fade-highlight {
+    animation: fadeHighlight 2s forwards;
+}
+@keyframes fadeHighlight {
+    0% {
+        background: linear-gradient(to right, #ffb072, #e8761c);
+        color: white;
+    }
+    80% {
+        background: linear-gradient(to right, #ffb072, #e8761c);
+        color: white;
+    }
+    100% {
+        background: transparent;
+        color: inherit;
+    }
+}
+
 </style>

@@ -19,6 +19,7 @@ const props = defineProps<{
             v-for="category in props.categories"
             :key="category.slug"
             :href="show(category.slug)"
+            preserve-scroll
             :class="[
           'category-item',
           selectedCategory.slug === category.slug

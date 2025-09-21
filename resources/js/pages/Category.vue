@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { useMediaQuery } from '@vueuse/core';
 
@@ -41,7 +41,7 @@ function handlePageNavigation(url: string | null) {
         },
     });
 }
-
+const selectedCategoryName = ref(props.category.name);
 </script>
 
 <template>
@@ -90,7 +90,7 @@ function handlePageNavigation(url: string | null) {
             </div>
 
             <div class="flex w-full flex-col">
-                <CategoryMobile :categories="categories.data" v-model:selectedCategory="category.name" />
+                <CategoryMobile :categories="categories.data" v-model:selectedCategory="selectedCategoryName" />
             </div>
         </div>
     </div>
