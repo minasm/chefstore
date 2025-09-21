@@ -7,7 +7,14 @@ import { defineConfig } from 'vite';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/js/app.ts'],
+            input: [
+                'resources/js/app.ts',
+                'resources/assets/favicon.svg',
+                'resources/assets/apple-touch-icon.png',
+                'resources/assets/logo.svg',
+                'resources/assets/Reply.svg',
+                'resources/assets/gratas-solutions.svg',
+            ],
             ssr: 'resources/js/ssr.ts',
             refresh: true,
         }),
