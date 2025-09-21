@@ -46,7 +46,7 @@
     <body class="font-sans antialiased">
     <header class="sr-only xl:not-sr-only">
         <div class="flex flex-wrap justify-between items-center xl:px-32 px-4 py-2">
-            <a herf="/">
+            <a href="/">
                 <img
                     src="{{ Vite::asset('resources/assets/logo.svg') }}"
 

@@ -1,4 +1,5 @@
 import { Faq, FAQResource } from './faq.interface';
+import { Links } from '@/interfaces/pagination.interface';
 
 export interface Category {
   id: number;
@@ -22,6 +23,7 @@ export interface CategorySimple {
 
 export interface CategoriesSimpleResource {
     data: CategorySimple[];
+    links: Links;
 }
 
 export interface SelectedCategory {
