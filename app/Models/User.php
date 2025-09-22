@@ -18,7 +18,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        $allowedDomains = ['chefstore.nl', 'gratas.com', 'miroglu.com'];
+        $allowedDomains = ['chefstore.nl', 'gratas.com.tr', 'miroglu.com'];
 
         $email = $this->email;
         $verified = $this->hasVerifiedEmail();
