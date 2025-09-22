@@ -10,7 +10,7 @@
     >
       <div class="relative">
         <img
-            :src="imageSrc(category.image)"
+            :src="imageSrc(category)"
             alt="category image"
             class="w-full h-48 object-cover"
         />
@@ -35,6 +35,7 @@ interface Category {
   slug: string;
   name: string;
   image?: string | null;
+  image_url?: string | null;
 }
 // :href="`/categories/${category.id}/${category.slug}`"
 defineProps<{
@@ -47,9 +48,24 @@ defineProps<{
 const API_BASE = import.meta.env.VITE_API_URL;
 
 // Safe join to avoid double slashes
-const imageSrc = (image?: string | null): string => {
+const imageSrc = (category: Category): string => {
   const base = (API_BASE || '').replace(/\/+$/, '');
-  const path = String(image || '').replace(/^\/+/, '');
-  return path ? `${base}/${path}` : `${base}/placeholder.jpg`;
+  const candidate = category.image_url ?? category.image ?? '';
+
+  if (/^https?:\/\//i.test(candidate)) {
+    return candidate;
+  }
+
+  const fallback = base ? `${base}/placeholder.jpg` : '/placeholder.jpg';
+  if (!candidate) {
+    return fallback;
+  }
+
+  const path = candidate.replace(/^\/+/, '');
+  if (!path) {
+    return fallback;
+  }
+
+  return base ? `${base}/${path}` : `/${path}`;
 };
 </script>
