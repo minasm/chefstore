@@ -25,7 +25,7 @@ class FaqResource extends Resource
     protected static ?string $modelLabel = 'FAQ';
     protected static ?string $pluralModelLabel = 'FAQs';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::QuestionMarkCircle;
 
     protected static ?string $recordTitleAttribute = 'question';
 

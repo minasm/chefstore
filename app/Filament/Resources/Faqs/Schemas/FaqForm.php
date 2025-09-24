@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Faqs\Schemas;
 
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -21,7 +22,13 @@ class FaqForm
                 Textarea::make('question')
                     ->required()
                     ->columnSpanFull(),
-                Textarea::make('answer')
+                RichEditor::make('answer')
+                    ->toolbarButtons([
+                        ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
+                        ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
+                        ['blockquote', 'codeBlock',],
+                        ['undo', 'redo'],
+                    ])
                     ->required()
                     ->columnSpanFull(),
             ]);

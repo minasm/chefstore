@@ -16,7 +16,7 @@ class CategoryInfolist
             ->components([
                 Section::make('Details')
                     ->schema([
-                        Grid::make(2)
+                        Grid::make(3)
                             ->schema([
                                 TextEntry::make('name')
                                     ->label('Name')
@@ -25,10 +25,6 @@ class CategoryInfolist
                                     ->label('Slug'),
                                 TextEntry::make('created_at')
                                     ->label('Created')
-                                    ->dateTime()
-                                    ->placeholder('-'),
-                                TextEntry::make('updated_at')
-                                    ->label('Last Updated')
                                     ->dateTime()
                                     ->placeholder('-'),
                             ])

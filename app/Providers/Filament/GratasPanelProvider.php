@@ -32,6 +32,8 @@ class GratasPanelProvider extends PanelProvider
                 'primary' => Color::Red,
             ])
             ->brandLogo(fn () => view('filament.logo'))
+            ->favicon(fn () => asset('/favicon.svg'))
+            ->renderHook('panels::head.end', fn () => view('filament.hooks.logo-style'))
             ->brandName('')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
