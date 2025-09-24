@@ -21,28 +21,37 @@
         {{ category.name }}
       </span>
 
-      <img src="../../assets/ok.svg" class="w-6 h-6" />
+      <img :src="ok" class="w-6 h-6"  alt="OK"/>
     </div>
   </div>
 </template>
-<script setup>
-// import { useRouter } from "vue-router";
+<script setup lang="ts">
+import ok from '@/../assets/ok.svg';
+import { router } from '@inertiajs/vue3';
 
-// const router = useRouter();
-const props = defineProps({
-  categories: Array,
-  selectedCategory: String,
-});
+interface Category {
+    id: number | string;
+    slug: string;
+    name: string;
+    image?: string | null;
+    image_url?: string | null;
+}
 
-const emit = defineEmits(["update:selectedCategory"]);
+defineProps<{
+    categories: Category[],
+    selectedCategory: string,
+}>()
 
-const goToCategory = (category) => {
-  router.push({
-    name: "CategoryDetail",
-    params: {
-      id: category.id,
-      slug: category.slug,
-    },
-  });
+
+defineEmits(["update:selectedCategory"]);
+
+const goToCategory = (category: Category) => {
+    if (!category) return;
+    const url = `/categories/${category.slug}`;
+    router.visit(url, {
+        preserveState: true,
+        // preserveScroll: true,
+    });
+
 };
 </script>

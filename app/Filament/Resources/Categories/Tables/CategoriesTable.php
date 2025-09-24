@@ -20,7 +20,9 @@ class CategoriesTable
                     ->searchable(),
                 TextColumn::make('slug')
                     ->searchable(),
-                ImageColumn::make('image'),
+                ImageColumn::make('image_url')
+                    ->label('Image')
+                    ->defaultImageUrl(fn () => asset('placeholder.jpg')),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -33,6 +35,7 @@ class CategoriesTable
             ->filters([
                 //
             ])
+            ->defaultSort('created_at', 'desc')
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),

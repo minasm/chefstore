@@ -47,6 +47,7 @@ class CategoryInfolist
                     ->schema([
                         ImageEntry::make('image')
                             ->label('Image')
+                            ->getStateUsing(fn ($record) => $record->image_url)
                             ->placeholder('-')
                             ->columnSpanFull(),
                     ])

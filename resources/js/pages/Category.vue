@@ -12,6 +12,7 @@ import serviceImg from '@/../assets/Settings.svg';
 import salesImg from '@/../assets/sales.svg';
 import phoneImg from '@/../assets/phone.svg';
 import { CategoriesSimpleResource, Category } from '@/interfaces/categories.interface';
+import Navbar from '@/components/Navbar.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -45,6 +46,7 @@ const selectedCategoryName = ref(props.category.name);
 </script>
 
 <template>
+    <Navbar />
     <div class="xl:px-32 xl:py-5">
         <div v-if="isDesktop" class="flex flex-col">
             <h1 class="mb-32 text-3xl font-extrabold text-[#4c84df]">Klantenservice</h1>

@@ -1,4 +1,6 @@
 <template>
+
+    <Navbar />
     <div class="xl:px-32 xl:py-5">
 
         <h1 class="mb-32 hidden text-3xl font-extrabold text-[#4c84df] xl:flex">Klantenservice</h1>
@@ -50,7 +52,7 @@
             </div>
 
             <div class="block xl:hidden">
-                <CategoryMobile :categories="categories.links" />
+                <CategoryMobile :categories="categories.data" />
             </div>
         </div>
     </div>
@@ -70,28 +72,12 @@ import salesImg from '@/../assets/sales.svg';
 import phoneImg from '../../assets/phone.svg';
 import Paginator from '@/components/Paginator.vue';
 import { CategoriesSimpleResource } from '@/interfaces/categories.interface';
+import Navbar from '@/components/Navbar.vue';
 
 
 defineProps<{
     categories?: CategoriesSimpleResource;
 }>();
-
-// const isPaginatedCategories = (value: CategoriesProp | undefined): value is PaginatedCategories =>
-//     !!value && !Array.isArray(value) && Array.isArray(value.data);
-
-// Store
-// const categories = computed<Category[]>(() => {
-//     const incoming = props.categories;
-//     if (Array.isArray(incoming)) {
-//         return incoming;
-//     }
-//     if (isPaginatedCategories(incoming)) {
-//         return incoming.data;
-//     }
-//     return [];
-// });
-
-
 
 
 const changePage = (url: string | null) => {

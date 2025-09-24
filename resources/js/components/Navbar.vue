@@ -5,20 +5,20 @@
       <div
         class="flex flex-wrap justify-between items-center xl:px-32 px-4 py-2"
       >
-        <router-link to="/">
+        <Link to="/">
           <img
-            src="@/assets/logo.svg"
+            :src="logo"
             class="object-contain self-center w-full"
             alt="Chefstore logo"
           />
-        </router-link>
+        </Link>
         <a
           href="https://www.chefstore.nl/"
           class="h-9 px-6 bg-[#e8761c] rounded-full flex justify-start items-center gap-2 min-w-60 font-bold text-white"
           target="_blank"
         >
           <img
-            src="@/assets/Reply.svg"
+            :src="Reply"
             class="object-contain w-6 h-6"
             alt="reply"
           />
@@ -44,9 +44,9 @@
       <div class="flex flex-col w-full z-50">
         <div class="w-full h-20 flex justify-between items-center bg-white">
           <div class="lg:min-w-36 min-w-20 lg:max-w-60 max-w-40 ml-6">
-            <router-link to="/">
-              <img src="@/assets/logo.svg" alt="Chef Store Logo" />
-            </router-link>
+            <Link to="/">
+              <img :src="logo" alt="Chef Store Logo" />
+            </Link>
           </div>
           <!-- Mobile menu button -->
           <button @click="toggleMenu" class="p-6 z-50">
@@ -62,7 +62,7 @@
           class="h-9 px-6 bg-[#e8761c] flex justify-center items-center gap-2 font-bold text-white"
         >
           <img
-            src="@/assets/Reply.svg"
+            :src="Reply"
             class="object-contain w-6 h-6"
             alt="reply"
           />
@@ -82,7 +82,7 @@
                 class="flex items-center gap-3 p-4 pl-6 text-white text-lg font-bold"
                 @click="toggleMenu"
               >
-                <img src="@/assets/forward.svg" alt="forward" />
+                <img :src="forward" alt="forward" />
                 {{ item.name }}
               </a>
             </li>
@@ -93,10 +93,14 @@
   </header>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from "vue";
-import menuIcon from "@/assets/menu.svg";
-import closeIcon from "@/assets/close.svg";
+import menuIcon from "@/../assets/menu.svg";
+import closeIcon from "@/../assets/close.svg";
+import Reply from '@/../assets/Reply.svg';
+import logo from '@/../assets/logo.svg';
+import forward from '@/../assets/forward.svg';
+import { Link } from '@inertiajs/vue3';
 
 const isOpen = ref(false);
 

@@ -3,27 +3,17 @@ import { ref, watch } from "vue";
 import { debounce } from "lodash";
 import { router } from '@inertiajs/vue3'
 import { show } from "@/actions/App/Http/Controllers/CategoryController";
-// === Types ===
+import type { PageProps as InertiaPageProps } from '@inertiajs/core'
+
 interface SearchResult {
     id: number
     category_id: number|string
-    category_slug?: string|null
+    category_slug: string
     question: string
     answer: string
     page?: number|string
 }
 
-// interface SearchApiPayload {
-//   data: {
-//     results: SearchResult[];
-//   };
-// }
-
-interface CategorySummary {
-  id: number;
-  slug: string;
-  name?: string;
-}
 
 // Refs
 const searchTerm = ref<string>("");
@@ -34,8 +24,8 @@ defineEmits<{
 }>();
 import { usePage } from '@inertiajs/vue3';
 
-type PageProps = { searchResults?: SearchResult[] };
-const page = usePage<PageProps>();
+type LocalProps = { searchResults?: SearchResult[] }
+const page = usePage<InertiaPageProps & LocalProps>()
 
 watch(
     () => page.props.searchResults,
@@ -50,76 +40,14 @@ const props = defineProps<{ searchResults?: SearchResult[] }>()
 watch(() => props.searchResults, (val) => {
     if (val) results.value = val
 })
-//
-// const handleSearch = debounce(async (): Promise<void> => {
-//   const term = searchTerm.value.trim();
-//   if (term === "") {
-//     results.value = [];
-//     emit("results", []);
-//     return;
-//   }
-//
-//   try {
-//     // If your axios instance already unwraps `response.data`, adjust as needed.
-//     const response = await axios.get<SearchApiPayload>("/search", {
-//       params: { term },
-//     });
-//
-//     // Some backends return {data: {...}} already unwrapped by axios interceptor; safeguard both shapes.
-//     const payload: SearchApiPayload["data"] =
-//         // @ts-expect-error – tolerate either shape at runtime
-//         (response?.data?.data ?? response?.data) as SearchApiPayload["data"];
-//
-//     results.value = Array.isArray(payload?.results) ? payload.results : [];
-//     emit("results", results.value);
-//   } catch (err) {
-//     console.error("Arama hatası:", err);
-//   }
-// }, 400);
+
 const runSearch = debounce(() => {
     router.reload({
         only: ['searchResults'],   // ask only for our lazy prop
         data: { term: searchTerm.value.trim() },
-        preserveState: true,
-        preserveScroll: true,
         replace: true,
     })
 }, 250)
-// const selectResult = async (faq: SearchResult): Promise<void> => {
-//   // console.log to verify types at runtime
-//   // console.log("Selected result:", faq);
-//   searchTerm.value = faq.question;
-//   results.value = [];
-//
-//   // Ensure categories exist (Home.vue may render SearchBar before categories load)
-//   if (!Array.isArray(faqStore.categories) || faqStore.categories.length === 0) {
-//     await faqStore.fetchCategories();
-//   }
-//
-//   const idNum = Number(faq.category_id);
-//   const pageNum = faq.page != null ? Number(faq.page) : 1;
-//
-//
-//   const fromStore: CategorySummary | undefined = Array.isArray(faqStore.categories)
-//       ? (faqStore.categories as CategorySummary[]).find(
-//           (c) => Number(c.id) === idNum
-//       )
-//       : undefined;
-//
-//   const slug = faq.category_slug ?? fromStore?.slug ?? (route.params.slug as string | undefined);
-//
-//   if (!idNum || !slug) {
-//     console.warn("Cannot navigate: missing id or slug", { idNum, slug, faq });
-//     return;
-//   }
-//
-//   await router.push({
-//     name: "CategoryDetail",
-//     params: { id: idNum, slug },
-//     query: { highlight: faq.id, page: pageNum },
-//   });
-// };
-//
 
 function selectResult(hit: SearchResult) {
     const page = Number(hit.page ?? 1)

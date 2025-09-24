@@ -14,6 +14,7 @@ export default defineConfig({
                 'resources/assets/logo.svg',
                 'resources/assets/Reply.svg',
                 'resources/assets/gratas-solutions.svg',
+                'resources/assets/login.svg',
             ],
             ssr: 'resources/js/ssr.ts',
             refresh: true,

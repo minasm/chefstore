@@ -4,9 +4,9 @@
     <div class="fixed top-0 left-0 flex flex-col w-full h-full z-50">
       <div class="w-full h-20 flex justify-between items-center bg-white">
         <div class="lg:min-w-36 min-w-20 lg:max-w-60 max-w-40 ml-6">
-          <router-link to="/">
-            <img src="@/assets/logo.svg" alt="Chef Store Logo" />
-          </router-link>
+          <Link to="/">
+            <img :src="logo" alt="Chef Store Logo" />
+          </Link>
         </div>
         <!-- Mobile menu button -->
         <button @click="toggleMenu" class="p-6 z-50">
@@ -23,7 +23,7 @@
         target="_blank"
       >
         <img
-          src="@/assets/Reply.svg"
+          :src="Reply"
           class="object-contain w-6 h-6"
           alt="reply"
         />
@@ -40,7 +40,7 @@
               class="flex items-center gap-3 p-4 pl-6 text-white text-lg font-bold"
               @click="toggleMenu"
             >
-              <img src="@/assets/forward.svg" alt="forward" />
+              <img :src="forward" alt="forward" />
               {{ item.name }}
             </a>
           </li>
@@ -50,11 +50,14 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from "vue";
-import menuIcon from "@/assets/menu.svg";
-import closeIcon from "@/assets/close.svg";
-
+import menuIcon from "@/../assets/menu.svg";
+import closeIcon from "@/../assets/close.svg";
+import Reply from '@/../assets/Reply.svg';
+import logo from '@/../assets/logo.svg';
+import forward from '@/../assets/forward.svg';
+import { Link } from '@inertiajs/vue3';
 const isOpen = ref(false);
 
 const menuItems = ref([
