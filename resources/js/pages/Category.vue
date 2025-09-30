@@ -13,6 +13,7 @@ import salesImg from '@/../assets/sales.svg';
 import phoneImg from '@/../assets/phone.svg';
 import { CategoriesSimpleResource, Category } from '@/interfaces/categories.interface';
 import Navbar from '@/components/Navbar.vue';
+import Footer from '@/components/Footer.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -49,10 +50,14 @@ const selectedCategoryName = ref(props.category.name);
     <Navbar />
     <div class="xl:px-32 xl:py-5">
         <div v-if="isDesktop" class="flex flex-col">
-            <h1 class="mb-32 text-3xl font-extrabold text-[#4c84df]">Klantenservice</h1>
+            <h1 class="mb-32 text-3xl font-extrabold text-[#4c84df]">
+                <a href="/">
+                    Klantenservice
+                </a>
+            </h1>
             <div class="mb-10 flex h-46 bg-[#2e567d] px-16">
                 <div class="h-60 w-60 items-center justify-start">
-                    <a href="https://www.chefstore.nl/" target="_blank">
+                    <a href="https://service.chefstore.nl/">
                         <img class="mt-[-6rem]" src="@/../assets/man.png" alt="Chefstore" />
                     </a>
                 </div>
@@ -96,6 +101,7 @@ const selectedCategoryName = ref(props.category.name);
             </div>
         </div>
     </div>
+    <Footer />
 </template>
 
 <style scoped></style>

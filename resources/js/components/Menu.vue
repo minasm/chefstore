@@ -1,9 +1,9 @@
 <template>
     <header class="sr-only xl:not-sr-only">
         <div class="flex flex-wrap items-center justify-between px-4 py-2 xl:px-32">
-            <Link to="/">
+            <a href="https://www.chefstore.nl/">
                 <img :src="logo" class="w-full self-center object-contain" alt="Chefstore logo" />
-            </Link>
+            </a>
             <a
                 href="https://www.chefstore.nl/"
                 class="flex h-9 min-w-60 items-center justify-start gap-2 rounded-full bg-[#e8761c] px-6 font-bold text-white"

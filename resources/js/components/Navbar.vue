@@ -5,13 +5,13 @@
       <div
         class="flex flex-wrap justify-between items-center xl:px-32 px-4 py-2"
       >
-        <Link to="/">
+        <a href="https://www.chefstore.nl/">
           <img
             :src="logo"
             class="object-contain self-center w-full"
             alt="Chefstore logo"
           />
-        </Link>
+        </a>
         <a
           href="https://www.chefstore.nl/"
           class="h-9 px-6 bg-[#e8761c] rounded-full flex justify-start items-center gap-2 min-w-60 font-bold text-white"

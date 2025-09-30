@@ -3,17 +3,19 @@
     <Navbar />
     <div class="xl:px-32 xl:py-5">
 
-        <h1 class="mb-32 hidden text-3xl font-extrabold text-[#4c84df] xl:flex">Klantenservice</h1>
+        <h1 class="mb-32 hidden text-3xl font-extrabold text-[#4c84df] xl:flex">
+            Klantenservice
+        </h1>
 
         <div class="mb-10 flex h-full w-full flex-col bg-[#2e567d] px-4 py-8 xl:h-46 xl:flex-row xl:px-16 xl:py-8">
             <!-- Image Section -->
             <div class="hidden h-60 w-60 items-center justify-start xl:flex">
-                <a href="https://www.chefstore.nl/" target="_blank">
+                <a href="https://service.chefstore.nl/">
                     <img class="mb-54" src="../../assets/man.png" alt="Chefstore" />
                 </a>
             </div>
             <div class="flex w-full items-center justify-start xl:hidden">
-                <a href="https://www.chefstore.nl/" target="_blank">
+                <a href="https://service.chefstore.nl/">
                     <img class="w-[180px]" src="../../assets/man.png" alt="Chefstore" />
                 </a>
                 <p class="mb-4 flex text-sm font-extrabold text-white xl:hidden xl:text-xl">
@@ -56,6 +58,7 @@
             </div>
         </div>
     </div>
+    <Footer />
 </template>
 
 <script setup lang="ts">
@@ -73,6 +76,7 @@ import phoneImg from '../../assets/phone.svg';
 import Paginator from '@/components/Paginator.vue';
 import { CategoriesSimpleResource } from '@/interfaces/categories.interface';
 import Navbar from '@/components/Navbar.vue';
+import Footer from '@/components/Footer.vue';
 
 
 defineProps<{

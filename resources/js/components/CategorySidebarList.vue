@@ -3,6 +3,7 @@ import { Link } from '@inertiajs/vue3'
 import { show } from "@/actions/App/Http/Controllers/CategoryController";
 import chefIcon from "@/../assets/chef.svg";
 import type { Category, CategorySimple } from '@/interfaces/categories.interface';
+import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 
 const props = defineProps<{
     categories: CategorySimple[];
@@ -13,7 +14,11 @@ const props = defineProps<{
 <template>
     <div class="w-1/4 hidden xl:flex flex-col" id="sidebar">
         <div class="h-12 border-b border-[#2e3638]/20 flex items-center pl-4">
-            <span class="text-[#204050] font-extrabold">Klantenservice</span>
+            <span class="text-[#204050] font-extrabold">
+                <a href="/" class="text-[#204050]">
+                    Klantenservice
+                </a>
+            </span>
         </div>
         <Link
             v-for="category in props.categories"

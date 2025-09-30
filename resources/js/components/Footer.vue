@@ -6,7 +6,7 @@
       class="flex flex-col max-w-full italic font-semibold text-blue-500 w-[180px]"
     >
       <img
-        src="@/assets/logo.svg"
+        :src="logo"
         class="object-contain self-center w-full"
         alt="Chefstore logo"
       />
@@ -31,4 +31,6 @@
   </footer>
 </template>
 
-<script setup></script>
+<script setup lang="ts">
+import logo from '@/../assets/logo.svg';
+</script>
