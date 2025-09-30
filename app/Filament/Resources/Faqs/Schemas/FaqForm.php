@@ -30,7 +30,8 @@ class FaqForm
                         ['undo', 'redo'],
                     ])
                     ->required()
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->extraAttributes(['class' => 'faq-content']),
             ]);
     }
 }
