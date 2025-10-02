@@ -2,19 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class Category extends Model
 {
-     use HasFactory;
+    use HasFactory;
 
     protected $fillable = [
         'name',
         'slug',
         'description',
         'image',
+        'sort',
     ];
 
     protected $appends = [
@@ -26,13 +27,29 @@ class Category extends Model
         return 'slug'; // then pass slug below
     }
 
-/**
- * Get the FAQs for the category.
- */
-public function faqs(): \Illuminate\Database\Eloquent\Relations\HasMany|Category
-{
-    return $this->hasMany(Faq::class);
-}
+    /**
+     * Bootstrap the model and its traits.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (Category $category): void {
+            if ($category->sort !== null) {
+                return;
+            }
+
+            $nextSort = (int) static::max('sort');
+
+            $category->sort = $nextSort + 1;
+        });
+    }
+
+    /**
+     * Get the FAQs for the category.
+     */
+    public function faqs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Faq::class);
+    }
 
     /**
      * Generate a public URL for the stored image, if present.
@@ -55,5 +72,4 @@ public function faqs(): \Illuminate\Database\Eloquent\Relations\HasMany|Category
 
         return null;
     }
-
 }

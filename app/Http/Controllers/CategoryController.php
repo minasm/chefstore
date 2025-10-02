@@ -14,10 +14,12 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $categories = Category::with('faqs')->paginate(10);
+        $categories = Category::with('faqs')
+            ->orderBy('sort')
+            ->paginate(10);
+
         return Inertia::render('Welcome')->with('categories', $categories);
     }
-
 
     /**
      * Display the specified resource.
@@ -28,12 +30,13 @@ class CategoryController extends Controller
 
         $category->setRelation('faqs', $faqs);
 
-
         return Inertia::render('Category')->with([
-            'categories' => CategorySimpleResource::collection(Category::get()),
+            'categories' => CategorySimpleResource::collection(
+                Category::orderBy('sort')->get()
+            ),
             'category' => $category,
             'highlightId' => $request->integer('highlight') ?: null,
-             'page' => $request->integer('page') ?: 1, // if you need it
+            'page' => $request->integer('page') ?: 1, // if you need it
         ]);
     }
 }

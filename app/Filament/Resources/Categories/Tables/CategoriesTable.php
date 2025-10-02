@@ -15,7 +15,12 @@ class CategoriesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->reorderable('sort')
             ->columns([
+                TextColumn::make('sort')
+                    ->label('Order')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('slug')
@@ -35,7 +40,7 @@ class CategoriesTable
             ->filters([
                 //
             ])
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('sort')
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),

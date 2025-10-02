@@ -31,7 +31,8 @@ class CategoryFactory extends Factory
             'name' => "Category {$index}",
             'slug' => "category-{$index}",
             'description' => $this->faker->paragraph(),
-            'image' => 'https://placehold.co/640x480?text=' . urlencode("Category {$index}"),
+            'image' => 'https://placehold.co/640x480?text='.urlencode("Category {$index}"),
+            'sort' => $index,
         ];
     }
 }
